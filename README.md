@@ -1,6 +1,6 @@
 # tinygist
 
-A simple tool to to share gist content from and to clipboards.
+A simple tool to to share gist content from and to clipboard.
 
 ## Installation
 
