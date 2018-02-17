@@ -23,7 +23,10 @@ elsif type == '-u'
   raw_url = self.create_gist(short_name, Clipboard.paste())
   response = self.shorten_url(raw_url, short_name)
   puts response.code
-  puts response['location']
+  if response.code == '201'
+    puts response['location']
+    puts raw_url
+  end
 else
   puts help
 end

@@ -18,6 +18,7 @@ module Tinygist
   def create_gist(name, code)
     uri = URI('https://api.github.com/gists')
     payload = {
+      'public' => false,
       'files' => {
         name => {
           'content' => code
