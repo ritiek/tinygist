@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require "tinygist"
+require "clipboard"
+
+extend Tinygist
+help = "usage: #{$0} [-d | -u] <unique_identifier>"
+
+type = ARGV[0]
+short_name = ARGV[1]
+
+if ARGV.count < 2
+  puts help
+  abort
+end
+
+if type == '-d'
+  url = self.get_gist_url(short_name)
+  code = self.raw_code(url)
+  Clipboard.copy(code)
+  puts 'copied from ' + url
+elsif type == '-u'
+  raw_url = self.create_gist(short_name, Clipboard.paste())
+  response = self.shorten_url(raw_url, short_name)
+  puts response.code
+  puts response['location']
+else
+  puts help
+end
