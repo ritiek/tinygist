@@ -12,7 +12,7 @@ $ gem install tinygist
 
 ```
 $ tinygist
-usage: bin/tinygist [-d | -u] <unique_identifier>
+usage: tinygist [-d | -u] <unique_identifier>
 ```
 
 Create a new gist from your clipboard content:
