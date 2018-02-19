@@ -21,7 +21,7 @@ Usage of tinygist:
 
 Create a new gist from your clipboard content:
 ```
-$ tinygist -u <some_unique_keywords>
+$ tinygist <some_unique_keywords>
 ```
 
 Get the gist content on another PC's clipboard:
