@@ -6,8 +6,12 @@ import (
     "net/url"
     "bytes"
     "io/ioutil"
+    "flag"
+    "os"
     "github.com/tidwall/gjson"
+    "github.com/atotto/clipboard"
     )
+
 
 func get_gist_contents(name string) string {
     response, err := http.Get("https://git.io/" + name)
@@ -22,6 +26,7 @@ func get_gist_contents(name string) string {
         return string(contents)
     }
 }
+
 
 func create_gist(name string, code string) string {
     payload := []byte(`{
@@ -48,31 +53,53 @@ func create_gist(name string, code string) string {
     return value.String()
 }
 
-func shorten_url(github_url string, code string) string {
-    form := url.Values{
+
+func shorten_url(github_url string, code string) (string, int) {
+    form := url.Values {
             "url"  : {github_url},
             "code" : {code},
     }
 	body := bytes.NewBufferString(form.Encode())
-	rsp, err := http.Post("https://git.io", "application/x-www-form-urlencoded", body)
+	rsp, err := http.Post("https://git.io", "", body)
 	if err != nil {
 		panic(err)
 	}
 	defer rsp.Body.Close()
 
-    return rsp.Header.Get("Location")
+    return rsp.Header.Get("Location"), rsp.StatusCode
 }
 
 
 func main() {
-    name := "hello_crazy_"
-    raw_url := "https://gist.githubusercontent.com/anonymous/c7d4e1983288f318e3b732fce88bbd88/raw/df8c54286144c469de33ff7d75b5cefe8a9edf7d/hello_crazy_"
-	//raw_url := create_gist(name, "this is sparta! :)")
-	//fmt.Println(raw_url)
+    download := flag.Bool("d", true,
+                        "Copy gist contents to clipboard")
 
-    //contents := get_gist_contents(name)
-    //fmt.Println(contents)
+    upload := flag.Bool("u", false,
+                        "Create gist from clipboard content")
 
-    github_url := shorten_url(raw_url, name)
-    fmt.Println(github_url)
+    name := flag.String("i", "REQUIRED",
+                        "Unique Identifier")
+
+    flag.Parse()
+
+    if *name == "REQUIRED" {
+        fmt.Println("Please set a unique identifier: `-i <unique_identifier>`")
+        os.Exit(1)
+    }
+
+    if *upload {
+        content, _ := clipboard.ReadAll()
+        raw_url := create_gist(*name, content)
+        _, return_code := shorten_url(raw_url, *name)
+        if return_code >= 200 && return_code <= 299 {
+            fmt.Println(raw_url)
+        } else {
+            fmt.Println("Identifier already used up!")
+            fmt.Println("Try again with different unique identifer")
+        }
+    } else if *download {
+        content := get_gist_contents(*name)
+        clipboard.WriteAll(content)
+        fmt.Println(content)
+    }
 }
