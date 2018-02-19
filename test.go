@@ -5,8 +5,7 @@ import (
     "net/http"
     "bytes"
     "io/ioutil"
-    //"os"
-    //"encoding/json"
+    "github.com/tidwall/gjson"
     )
 
 func get_gist_contents(name string) string {
@@ -40,10 +39,12 @@ func create_gist(name string, code string) string {
     if err != nil {
         panic(err)
     }
+
     defer resp.Body.Close()
     body, _ := ioutil.ReadAll(resp.Body)
 
-    return string(body)
+    value := gjson.Get(string(body), "files." + name + ".raw_url")
+    return value.String()
 }
 
 
@@ -52,6 +53,6 @@ func main() {
     // contents := get_gist_contents(name)
     // fmt.Println(contents)
 
-	raw_url := create_gist("bla123321he", "this is sparta")
+	raw_url := create_gist("bla123321he", "this is sparta!")
 	fmt.Println(raw_url)
 }
