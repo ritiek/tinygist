@@ -3,7 +3,7 @@ package main
 import (
     "fmt"
     "net/http"
-    "net/url"
+    "bytes"
     "io/ioutil"
     "os"
     )
@@ -18,8 +18,7 @@ func get_gist_contents(name string) string {
         defer response.Body.Close()
         contents, err := ioutil.ReadAll(response.Body)
         if err != nil {
-            fmt.Printf("%s", err)
-            os.Exit(1)
+            panic(err)
         }
         return string(contents)
     }
@@ -48,35 +47,31 @@ func get_gist_contents(name string) string {
 end*/
 
 func create_gist(name string, code string) string {
-    /*payload := []byte(`{
-		"public": "false",
-		"files": {
-			"name": {
-				"content": code
-			}
-		}
-	}`)*/
-    // response, err := http.PostForm("http://example.com/form", url.Values{payload})
-    response, err := http.PostForm("http://example.com/form", url.Values{"public":"false":"hello"})
+    json := []byte(`{
+            "public": "false",
+            "files": {
+                "` + name + `": {
+                    "content":"` + code + `"
+                    }
+                }
+            }`)
+
+    req, err := http.NewRequest("POST", "https://api.github.com/gists", bytes.NewBuffer(json))
+    client := &http.Client{}
+    resp, err := client.Do(req)
     if err != nil {
-        fmt.Printf("%s", err)
-        os.Exit(1)
-        return "b"
-    } else {
-        defer response.Body.Close()
-        contents, err := ioutil.ReadAll(response.Body)
-        if err != nil {
-            fmt.Printf("%s", err)
-            os.Exit(1)
-        }
-        return string(contents)
+        panic(err)
     }
+    defer resp.Body.Close()
+    body, _ := ioutil.ReadAll(resp.Body)
+    return string(body)
 }
 
 func main() {
     // name := "bla123321he"
     // contents := get_gist_contents(name)
     // fmt.Println(contents)
-	contents := create_gist("bla123321he", "this is sparta")
-	fmt.Println(contents)
+
+	// contents := create_gist("bla123321he", "this is sparta")
+	// fmt.Println(contents)
 }
