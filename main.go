@@ -73,7 +73,7 @@ func main() {
 	uploadFlag := flag.Bool("u", false,
 		"Create gist from clipboard content")
 
-	identifier := flag.String("i", "REQUIRED",
+	identifier := flag.String("i", "",
 		"Unique Identifier")
 
 	flag.Parse()
