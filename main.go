@@ -78,7 +78,7 @@ func main() {
 
 	flag.Parse()
 
-	if *identifier == "REQUIRED" {
+	if *identifier == "" {
 		fmt.Println("Please pass a unique identifier: `-i <uniqueIdentifier>`")
 		os.Exit(1)
 	}
