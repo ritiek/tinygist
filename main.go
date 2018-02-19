@@ -30,7 +30,7 @@ func createGist(identifier string, code string) string {
 	payload := []byte(`{
             "public": "false",
             "files": {
-                "` + identifier + `": {
+                "tinygist": {
                     "content":"` + code + `"
                     }
                 }
@@ -47,7 +47,7 @@ func createGist(identifier string, code string) string {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	value := gjson.Get(string(body), "files." + identifier + ".raw_url")
+	value := gjson.Get(string(body), "files.tinygist.raw_url")
 	return value.String()
 }
 
