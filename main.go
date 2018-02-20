@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 )
 
 func getGistContents(identifier string) string {
@@ -28,13 +29,13 @@ func getGistContents(identifier string) string {
 
 func createGist(identifier string, code string) string {
 	payload := []byte(`{
-            "public": "false",
-            "files": {
-                "tinygist": {
-                    "content":"` + code + `"
-                    }
-                }
-            }`)
+         "public": "false",
+         "files": {
+             "tinygist": {
+                 "content":` + strconv.Quote(code) + `
+                 }
+             }
+         }`)
 
 	req, err := http.NewRequest("POST", "https://api.github.com/gists",
 		bytes.NewBuffer(payload))
