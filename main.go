@@ -52,9 +52,9 @@ func createGist(identifier string, code string) string {
 	return value.String()
 }
 
-func shortenURL(github_url string, code string) (string, int) {
+func shortenURL(githubURL string, code string) (string, int) {
 	form := url.Values{
-		"url":  {github_url},
+		"url":  {githubURL},
 		"code": {code},
 	}
 	body := bytes.NewBufferString(form.Encode())
